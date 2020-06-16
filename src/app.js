@@ -12,12 +12,12 @@ const repositories = [];
 
 app.get("/repositories", (request, response) => {
   // TODO
-    return response.status(200).json(repositories)
+    return response.status(200).json(repositories);
 });
 
 app.post("/repositories", (request, response) => {
   // TODO
-  const { title, url, techs } = request.body
+  const { title, url, techs } = request.body;
   const newRepository = {
       id: uuid(),
       title,
@@ -41,7 +41,7 @@ app.put("/repositories/:id", (request, response) => {
     return response.status(400).json({error: 'Invalid repository ID'});
   }
 
-  const indexRepository = repositories.findIndex(e => e.id == id)
+  const indexRepository = repositories.findIndex(e => e.id == id);
 
   if(indexRepository < 0){
     return response.status(404).json({error: 'Repository Not Found'})
@@ -62,7 +62,7 @@ app.delete("/repositories/:id", (request, response) => {
   if(!isUuid(id))
     return response.status(400).json({error: 'Invalid repository ID'});
 
-    const indexRepository = repositories.findIndex(e => e.id == id)
+    const indexRepository = repositories.findIndex(e => e.id == id);
 
     if(indexRepository < 0){
       return response.status(404).json({error: 'Repository Not Found'});
@@ -70,13 +70,13 @@ app.delete("/repositories/:id", (request, response) => {
 
     repositories.splice(indexRepository, 1);
 
-    return response.status(204).send()
+    return response.status(204).send();
 
 });
 
 app.post("/repositories/:id/like", (request, response) => {
   // TODO
-    const { id } = request.params
+    const { id } = request.params;
 
     if(!isUuid(id))
         return response.status(400).json({error: 'Invalid repository ID'});
