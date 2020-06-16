@@ -12,7 +12,7 @@ const repositories = [];
 
 app.get("/repositories", (request, response) => {
   // TODO
-    return response.status(200).json(repositories);
+    return response.json(repositories);
 });
 
 app.post("/repositories", (request, response) => {
@@ -21,14 +21,14 @@ app.post("/repositories", (request, response) => {
   const newRepository = {
       id: uuid(),
       title,
-      url: `https://github.com/${url}`,
-      techs: techs.split(',').map(e => e.trim()),
+      url,
+      techs,
       likes: 0
   }
 
   repositories.push(newRepository);
 
-  return response.status(201).json(newRepository);
+  return response.json(newRepository);
 
 });
 
@@ -37,21 +37,17 @@ app.put("/repositories/:id", (request, response) => {
   const { id } = request.params;
   const { title, url, techs } = request.body;
 
-  if(!isUuid(id)){
-    return response.status(400).json({error: 'Invalid repository ID'});
+  const repository = repositories.find(e => e.id == id);
+
+  if(!repository){
+      return response.status(400).json(400);
   }
 
-  const indexRepository = repositories.findIndex(e => e.id == id);
+  repository.title = title; 
+  repository.url = url; 
+  repository.techs = techs; 
 
-  if(indexRepository < 0){
-    return response.status(404).json({error: 'Repository Not Found'})
-  }
-
-  repositories[indexRepository].title = title; 
-  repositories[indexRepository].url = `https://github.com/${url}`; 
-  repositories[indexRepository].techs = techs.split(',').map(e => e.trim()); 
-
-  return response.status(200).json(repositories[indexRepository])
+  return response.status(200).json(repository)
 
 });
 
@@ -59,13 +55,10 @@ app.delete("/repositories/:id", (request, response) => {
   // TODO
   const { id } = request.params;
 
-  if(!isUuid(id))
-    return response.status(400).json({error: 'Invalid repository ID'});
-
     const indexRepository = repositories.findIndex(e => e.id == id);
 
     if(indexRepository < 0){
-      return response.status(404).json({error: 'Repository Not Found'});
+        return response.status(400).json(400);
     }
 
     repositories.splice(indexRepository, 1);
@@ -77,18 +70,15 @@ app.delete("/repositories/:id", (request, response) => {
 app.post("/repositories/:id/like", (request, response) => {
   // TODO
     const { id } = request.params;
+    const repository = repositories.find(e => e.id === id);
 
-    if(!isUuid(id))
-        return response.status(400).json({error: 'Invalid repository ID'});
+    if(!repository){
+        return response.status(400).json(400);
+    }
+  
+    repository.likes += 1
 
-    const indexRepository = repositories.findIndex(e => e.id == id);
-
-    if(indexRepository < 0)
-        return response.status(404).json({error: "Repository Not Found"});
-
-    repositories[indexRepository].likes += 1
-
-    response.status(201).json(repositories[indexRepository]);
+    response.status(201).json(repository);
 
 });
 
